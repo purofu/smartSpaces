@@ -308,7 +308,7 @@ p{
   height: 400px;
   background: white;
   padding: 0px;
-  margin-top: 15px;
+  margin-top: 20px;
   border-radius: 10px;
   margin-bottom: 10px;
 }
@@ -486,7 +486,7 @@ form.example input[type=text] {
 
 .border-top{
   border-top: 1px solid $border-color;
-  margin-top: 20px;
+  margin-top: 15px;
   padding-top: 8px;
 }
 
