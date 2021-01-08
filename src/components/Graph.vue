@@ -38,6 +38,11 @@ export default {
                 name: '6',
                 x: 150,
                 y: 200
+            },
+            {
+                name: '7',
+                x: 150,
+                y: 11
             }
           ],
         links : [
@@ -46,36 +51,43 @@ export default {
                 target: 2,
                 direction: false,
                 id: 'kostas',
-                flow: 10,
+                flow: 2,
                 maxCapacity: 70
             },
             {
-                source: 2,
-                target: 5,
+                source: 5,
+                target: 2,
                 direction: false,
                 id: 'iordanis',
-                flow: 20
+                flow: 3
             },
             {
                 source: 3,
                 target: 4,
-                direction: false,
+                direction: true,
                 id: 'pokebro',
-                flow: 10
+                flow: 1
             },
             {
                 source: 6,
                 target: 3,
                 direction: false,
                 id: 'pokebro',
-                flow: 10
+                flow: 2
             },
              {
                 source: 2,
                 target: 3,
                 direction: false,
                 id: 'pokebro',
-                flow: 10
+                flow: 3
+            },
+            {
+                source: 3,
+                target: 7,
+                direction: true,
+                id: 'pokebro',
+                flow: 6
             }
         ]
      }
@@ -85,56 +97,79 @@ export default {
   },
  methods: {
    generateArc() {
-    const margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = 1000 - margin.left - margin.right,
-            height = 1000 - margin.top - margin.bottom;
+    const pointer = this.points;
 
+    const margin = {top: 20, right: 20, bottom: 30, left: 50},
+            width = 660 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+  
+
+    const xScale = d3.scaleLinear()
+            .domain([0, d3.max(pointer, d => d.x)])
+            .range([width, 0]);
+
+    const yScale = d3.scaleLinear()
+            .domain([0, d3.max(pointer, d => d.y)])
+            .range([0, height]);
+
+
+    
     const graph = d3.select("#test")
             .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
+    
+    const lines = d3.select("svg")                
                 .append("g")
+                    .attr("id", "lines")
                     .attr("transform",
                         "translate(" + margin.left + "," + margin.top + ")");
+
+
+    const circles = d3.select("svg")
+                .append("g")
+                    .attr("id", "cirlces")
+                    .attr("transform",
+                        "translate(" + margin.left + "," + margin.top + ")");
+        
+    
    
-    const circle = graph.selectAll("g")
-            .data( [this.points, this.links  ])
+    const circle = circles.selectAll("circles")
+            .data(this.points)
             .enter()
             .append("g");
-  alert(JSON.stringify(circle))
-          circle.append("circle")
+            
+            circle.append("circle")
             .attr("cx", function(d) {
-            return d[0]..x;})
+            return xScale(d.x);})
             .attr("cy", function(d) {
-            return d.pp.y;})
-            .attr("r", 5)
-            .attr("fill", "green")
-            .attr("x1", function(d) {
-            return this.points[d.ll.source - 1].x;})
-            .attr("y1", function(d) {
-            return this.points[d.ll.source - 1].y;})
-            .attr("x2", function(d) {
-            return this.points[d.ll.target - 1].x;}) 
-            .attr("y2", function(d) {
-            return this.points[d.ll.target - 1].y;})
-            .style("stroke-width", function(d){
-                return d.ll.flow;
-            })
-
-    const line = graph.selectAll("g")
+            return yScale(d.y);})
+            .attr("r", 1)
+            .attr("class", "circle")
+    const line = lines.selectAll("lines")
             .data(this.links)
             .enter()
             .append("g");
-
+            
             line.append("line")
+            .attr("id", function(d){
+                return d.id;
+            })
             .attr("x1", function(d) {
-            return this.points[d.source - 1].x;})
+            return xScale(pointer[d.source - 1].x);})
             .attr("y1", function(d) {
-            return this.points[d.source - 1].y;})
+            return yScale(pointer[d.source - 1].y);})
             .attr("x2", function(d) {
-            return this.points[d.target - 1].x;}) 
+            return xScale(pointer[d.target - 1].x);}) 
             .attr("y2", function(d) {
-            return this.points[d.target - 1].y;})
+            return yScale(pointer[d.target - 1].y);})
+            .attr("class", function(d){
+                if (d.direction) {
+                    return "draw3";
+                } else {
+                    return "draw4";
+                }
+                })
             .style("stroke-width", function(d){
                 return d.flow;
             })
@@ -146,9 +181,9 @@ export default {
             .attr("r", 0)
             .transition()
             .ease(d3.easeBounce)
-            .delay(function(d, i){ return i*1000; })
+            //.delay(function(d, i){ return i*1000; })
             .duration(1000)
-            .attr("r", 20);
+            .attr("r", 6);
         }
    }
  }
@@ -157,7 +192,17 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+$font-stack: 'Inter', sans-serif;
+$border-color: #E8E8EE;
+$border-light-color: #F4F4FA;
+$primary: #0066FF;
+$red: #FF808B;
+$green: #96D6C3;
+$darkGrey:#585E6C;
+$lightGrey:#C1C8D8;
 
 .line-chart {
   margin: 25px;
@@ -174,7 +219,7 @@ export default {
         }
 
         .circle {
-            fill: blue; 
+            fill: $primary; 
             
         }
 
@@ -203,7 +248,7 @@ export default {
             stroke-width: 17px;
 
 /* Stroke-dasharray property */
-            stroke-dasharray: 1000px;
+            stroke-dasharray:  600px;
             stroke-dashoffset: 1000px;
             animation: move 2s linear infinite;   
 /*     animation-fill-mode: forwards; */
@@ -211,7 +256,7 @@ export default {
 
         .draw3 {
             fill: none;
-            stroke: #7d2d68;
+            stroke: $primary;
             stroke-width: 5px;
 
 /* Stroke-dasharray property */
@@ -223,7 +268,7 @@ export default {
 
         .draw4 {
             fill: none;
-            stroke: #7d2d68;
+            stroke: $red;
             stroke-width: 5px;
 
 /* Stroke-dasharray property */
