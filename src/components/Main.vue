@@ -45,12 +45,21 @@
       </div>
 
       <div class='graph'>
-
+         <Graph />
       </div>
    </div>  
 </template>
 
 <script>
+import Graph from './Graph.vue'
+
+export default {
+  name: 'App',
+  components: {
+    //HelloWorld,
+    Graph
+  }
+}
 </script>
 <style scoped>
 

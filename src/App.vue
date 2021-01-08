@@ -21,7 +21,6 @@ import Sidebar from './components/Sidebar.vue'
 export default {
   name: 'App',
   components: {
-    //HelloWorld,
     Header,
     Menu,
     Main,
