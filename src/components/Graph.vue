@@ -1,5 +1,7 @@
 <template>
   <div id="test">
+      {{data.points}}
+      {{data.links}}
   </div>
 </template>
 
@@ -8,97 +10,19 @@ import * as d3 from 'd3';
 
 export default { 
   name: 'Graph',
+  props: {
+      data: Object,
+  },
   data() {
    return {
-     
-      points : [
-            {
-                name: '1',
-                x: 300,
-                y: 300
-            }, {
-                name: '2',
-                x: 800,
-                y: 300
-            }, {
-                name: '3',
-                x: 550,
-                y: 100
-            }, {
-                name: '4',
-                x: 550,
-                y: 500
-            },
-            {
-                name: '5',
-                x: 20,
-                y: 500
-            },
-            {
-                name: '6',
-                x: 150,
-                y: 200
-            },
-            {
-                name: '7',
-                x: 150,
-                y: 11
-            }
-          ],
-        links : [
-            {
-                source: 1,
-                target: 2,
-                direction: false,
-                id: 'kostas',
-                flow: 2,
-                maxCapacity: 70
-            },
-            {
-                source: 5,
-                target: 2,
-                direction: false,
-                id: 'iordanis',
-                flow: 3
-            },
-            {
-                source: 3,
-                target: 4,
-                direction: true,
-                id: 'pokebro',
-                flow: 1
-            },
-            {
-                source: 6,
-                target: 3,
-                direction: false,
-                id: 'pokebro',
-                flow: 2
-            },
-             {
-                source: 2,
-                target: 3,
-                direction: false,
-                id: 'pokebro',
-                flow: 3
-            },
-            {
-                source: 3,
-                target: 7,
-                direction: true,
-                id: 'pokebro',
-                flow: 6
-            }
-        ]
+        points : this.data.points,
+        object_links : this.data.links
      }
  },
- mounted() {
-    this.generateArc();
-  },
  methods: {
    generateArc() {
-    const pointer = this.points;
-
+    const pointer = this.data.points;
+    const links = Object.keys(this.object_links).map((key) =>  this.object_links[key]);
     const margin = {top: 20, right: 20, bottom: 30, left: 50},
             width = 660 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
@@ -113,18 +37,16 @@ export default {
             .range([0, height]);
 
 
-    
+   
     const graph = d3.select("#test")
             .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
-    
     const lines = d3.select("svg")                
                 .append("g")
                     .attr("id", "lines")
                     .attr("transform",
                         "translate(" + margin.left + "," + margin.top + ")");
-
 
     const circles = d3.select("svg")
                 .append("g")
@@ -135,7 +57,7 @@ export default {
     
    
     const circle = circles.selectAll("circles")
-            .data(this.points)
+            .data(pointer)
             .enter()
             .append("g");
             
@@ -146,8 +68,9 @@ export default {
             return yScale(d.y);})
             .attr("r", 1)
             .attr("class", "circle")
-    const line = lines.selectAll("lines")
-            .data(this.links)
+   
+   const line = lines.selectAll("lines")
+            .data(links)
             .enter()
             .append("g");
             
@@ -156,13 +79,25 @@ export default {
                 return d.id;
             })
             .attr("x1", function(d) {
-            return xScale(pointer[d.source - 1].x);})
+                const index = pointer.map(function(e) { return e.name; }).indexOf(d.source);
+                return xScale(pointer[index].x)
+
+            })
             .attr("y1", function(d) {
-            return yScale(pointer[d.source - 1].y);})
+                const index = pointer.map(function(e) { return e.name; }).indexOf(d.source);
+                return yScale(pointer[index].y);
+
+            })
             .attr("x2", function(d) {
-            return xScale(pointer[d.target - 1].x);}) 
+                const index = pointer.map(function(e) { return e.name; }).indexOf(d.target);
+                return xScale(pointer[index].x);
+
+            }) 
             .attr("y2", function(d) {
-            return yScale(pointer[d.target - 1].y);})
+                const index = pointer.map(function(e) { return e.name; }).indexOf(d.target);
+                return yScale(pointer[index].y);
+
+               })
             .attr("class", function(d){
                 if (d.direction) {
                     return "draw3";
@@ -173,7 +108,6 @@ export default {
             .style("stroke-width", function(d){
                 return d.flow;
             })
-
     repeat();
 
     function repeat() {
@@ -185,8 +119,16 @@ export default {
             .duration(1000)
             .attr("r", 6);
         }
-   }
- }
+   
+      }
+
+
+
+
+ },
+  mounted() {
+    this.generateArc();
+  }
 };
 
 
