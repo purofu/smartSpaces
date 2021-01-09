@@ -1,7 +1,5 @@
 <template>
   <div id="test">
-      {{data.points}}
-      {{data.links}}
   </div>
 </template>
 
@@ -11,17 +9,17 @@ import * as d3 from 'd3';
 export default { 
   name: 'Graph',
   props: {
-      data: Object,
+      fetch_data: Array,
   },
   data() {
    return {
-        points : this.data.points,
-        object_links : this.data.links
+        points : this.fetch_data[0],
+        object_links : this.fetch_data[1]
      }
  },
  methods: {
    generateArc() {
-    const pointer = this.data.points;
+    const pointer = this.points;
     const links = Object.keys(this.object_links).map((key) =>  this.object_links[key]);
     const margin = {top: 20, right: 20, bottom: 30, left: 50},
             width = 660 - margin.left - margin.right,
