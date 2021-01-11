@@ -24,22 +24,22 @@
         <div class="kpi3">
           <h5 class="zero">Add more people</h5>
           <form class="example" action="action_page.php">
-            <input type="text" placeholder="Write number of people" name="search">
-            <button type="submit"><i class="fa fa-search"><img src="../assets/plus.svg"></i></button>
+            <input type="text" placeholder="Write number of people" name="search" v-model="demand">
+            <button type="submit" v-on:click="setDemand('k1', demand)"><i class="fa fa-search"><img src="../assets/plus.svg"></i></button>
           </form>
         </div>
         <div class="kpi3">
           <h5 class="zero">Reduce people</h5>
           <form class="example-red" action="action_page.php">
-            <input type="text" placeholder="Write number of people" name="search">
-            <button type="submit"><i class="fa fa-search"><img src="../assets/minus.svg"></i></button>
+            <input type="text" placeholder="Write number of people" name="search" v-model="demand">
+            <button type="submit" v-on:click="setDemand('k2', demand)"><i class="fa fa-search"><img src="../assets/minus.svg"></i></button>
           </form>
         </div>
         <div class="kpi3">
           <h5 class="zero">Add something else</h5>
           <form class="example" action="action_page.php">
-            <input type="text" placeholder="Write number of people" name="search">
-            <button type="submit"><i class="fa fa-search"><img src="../assets/plus.svg"></i></button>
+            <input type="text" placeholder="Write number of people" name="search" v-model="demand">
+            <button type="submit" v-on:click="setDemand('k3', demand)"><i class="fa fa-search"><img src="../assets/plus.svg"></i></button>
           </form>
         </div>
       </div>
@@ -101,7 +101,27 @@ export default {
         .catch(function (error) {   
           console.log(error)
       })
-  }}
+    },
+    getsolve () {
+      axios.get('http://127.0.0.1:5000/solve')
+        .then(response => (
+          console.log(response)))
+        .catch(function (error) {
+          alert(error)
+        })
+    },
+    setDemand (commodity, demand) {
+      axios.get('http://127.0.0.1:5000/setdemand?commodity=' + commodity + '&demand=' + demand)
+        .then(response => (
+          console.log(response)))
+        .catch(function (error) {
+          alert(error)
+        })
+      this.getsolve ()
+      this.fetch_nodes()
+      this.fetch_kpi()
+    }
+  }
 }
 </script>
 <style scoped>

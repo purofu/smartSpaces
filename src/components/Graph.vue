@@ -79,22 +79,18 @@ export default {
             .attr("x1", function(d) {
                 const index = pointer.map(function(e) { return e.name; }).indexOf(d.source);
                 return xScale(pointer[index].x)
-
             })
             .attr("y1", function(d) {
                 const index = pointer.map(function(e) { return e.name; }).indexOf(d.source);
                 return yScale(pointer[index].y);
-
             })
             .attr("x2", function(d) {
                 const index = pointer.map(function(e) { return e.name; }).indexOf(d.target);
                 return xScale(pointer[index].x);
-
             }) 
             .attr("y2", function(d) {
                 const index = pointer.map(function(e) { return e.name; }).indexOf(d.target);
                 return yScale(pointer[index].y);
-
                })
             .attr("class", function(d){
                 if (d.direction) {
@@ -104,7 +100,7 @@ export default {
                 }
                 })
             .style("stroke-width", function(d){
-                return d.flow;
+                return d.weight;
             })
     repeat();
 
@@ -213,9 +209,8 @@ $lightGrey:#C1C8D8;
 
 /* Stroke-dasharray property */
             stroke-dasharray: 10px;
-            stroke-dashoffset: 0;
+            stroke-dashoffset: 0px;
             animation: move2 2s linear infinite;   
-            outline-offset: 10px;
 /*     animation-fill-mode: forwards; */
         }
 
